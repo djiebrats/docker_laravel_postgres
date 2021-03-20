@@ -1,0 +1,57 @@
+version: "3.1"
+services:
+
+    postgres:
+      image: postgres:11-alpine
+      container_name: ${PROJECT_NAME}-postgres
+      volumes:
+         - "./sourcefiles/postgres:/var/lib/postgresql/data"
+      environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+      ports:
+       - "5432:5432"
+      networks:
+            testing_net:
+                ipv4_address: 172.24.4.2
+    composer:
+      container_name: ${PROJECT_NAME}-composer
+      image: composer
+      volumes:
+          - ./application:/app
+      command: install
+      networks:
+            testing_net:
+                ipv4_address: 172.24.4.5
+
+    webserver:
+      image: nginx:latest
+      container_name: ${PROJECT_NAME}-webserver
+      working_dir: /application
+      volumes:
+          - ./application:/application
+          - ./sourcefiles/nginx:/etc/nginx/conf.d
+      ports:
+       - "80:80"
+      networks:
+            testing_net:
+                ipv4_address: 172.24.4.3
+      restart: unless-stopped
+
+    php-fpm:
+      build: sourcefiles/php-fpm
+      container_name: ${PROJECT_NAME}-php-fpm
+      working_dir: /application
+      volumes:
+        - ./sipd:/application
+        - ./sourcefiles/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
+      networks:
+            testing_net:
+                ipv4_address: 172.24.4.4
+networks:
+    testing_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.24.0.0/16

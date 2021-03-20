@@ -14,7 +14,7 @@ services:
       image: postgres:11-alpine
       container_name: ${PROJECT_NAME}-postgres
       volumes:
-         - "./sourcefiles/postgres:/var/lib/postgresql/data"
+         - "./configfiles/postgres:/var/lib/postgresql/data"
       environment:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -40,7 +40,7 @@ services:
       working_dir: /application
       volumes:
           - ./application:/application
-          - ./sourcefiles/nginx:/etc/nginx/conf.d
+          - ./configfiles/nginx:/etc/nginx/conf.d
       ports:
        - "80:80"
       networks:
@@ -49,12 +49,12 @@ services:
       restart: unless-stopped
 
     php-fpm:
-      build: sourcefiles/php-fpm
+      build: configfiles/php-fpm
       container_name: ${PROJECT_NAME}-php-fpm
       working_dir: /application
       volumes:
         - ./sipd:/application
-        - ./sourcefiles/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
+        - ./configfiles/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini
       networks:
             testing_net:
                 ipv4_address: 172.24.4.4

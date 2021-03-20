@@ -29,13 +29,13 @@ Simple docker-compose for Laravel, with postgresql, reddis, nginx and php-fpm
 + nginx:alpine
 + php73-fpm:latest
 
-# SourceFiles
+# Configfiles
 
 ## Into **sourcefiles** directory, exists others directories: **php-fpm** and **nginx**:
 
 
 ### php-fpm: Extensions PHP and PHP.INI
-+ Dockerfile: php7.1-pgsql php7.1-gd php-redis
++ Dockerfile: php7.3-pgsql php7.3-gd php-redis
 + php-ini-overrides.ini
 
 ### nginx: nginx.conf
